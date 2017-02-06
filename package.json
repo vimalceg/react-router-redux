@@ -79,5 +79,8 @@
     "redux-devtools-dock-monitor": "^1.0.1",
     "redux-devtools-log-monitor": "^1.0.1",
     "webpack": "^1.12.9"
+  },
+  "dependencies": {
+    "simple-normalizr": "^1.0.1"
   }
 }

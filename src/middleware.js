@@ -1,17 +1,36 @@
-import { CALL_HISTORY_METHOD } from './actions'
+import { URL_CHANGE } from './constants';
+import { queryStringToJSON } from './utils';
 
-/**
- * This middleware captures CALL_HISTORY_METHOD actions to redirect to the
- * provided history object. This will prevent these actions from reaching your
- * reducer or any middleware that comes after this one.
- */
-export default function routerMiddleware(history) {
-  return () => next => action => {
-    if (action.type !== CALL_HISTORY_METHOD) {
+export const historyMiddleware = ( history ) => ( store )=>{
+  /* init dispatch*/
+  store.dispatch({
+    type:URL_CHANGE,
+    from:"history",data:{
+    	location:history.getCurrentLocation()/* only works history ^3.0.0 */
+    }
+  })
+  var unlisten = history.listen( ( location, action) => {
+      var search=location.search;
+      location.query=queryStringToJSON(search);
+      store.dispatch({
+        type:URL_CHANGE,
+        from:"history",data:{location}
+      })
+  })
+  return ( next ) => ( action ) => {
+    if(action.type==URL_CHANGE && action.from=="history"){
+      return next(Object.assign(action,{from:null})) //from is a flag used for update url only via history api 
+    }
+    else if(action.type==URL_CHANGE){
+      if(action.data.location.action=="POP"){//no idea some issue there
+        history.go(-1);
+      }
+      else{
+        history[action.data.location.action.toLowerCase()](action.data.location) 
+      }
+    }
+    else{
       return next(action)
     }
-
-    const { payload: { method, args } } = action
-    history[method](...args)
   }
 }

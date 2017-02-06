@@ -9,11 +9,14 @@ import webpackConfig from './webpack.config'
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 import { Provider } from 'react-redux'
-import { createMemoryHistory, match, RouterContext } from 'react-router'
-import { syncHistoryWithStore } from '../../src'
-
+//import { createMemoryHistory, match, RouterContext } from 'react-router'
+import { createMemoryHistory } from 'history';
+//import { syncHistoryWithStore } from '../../src'
+import { Match } from 'react-router-redux'
+console.log(createMemoryHistory);
 import { configureStore } from './store'
-import routes from './routes'
+//import routes from './routes'
+import { App, Home, Foo, Bar } from './components'
 
 const app = express()
 
@@ -36,11 +39,34 @@ const HTML = ({ content, store }) => (
 )
 
 app.use(function (req, res) {
+  console.log(req.url)
   const memoryHistory = createMemoryHistory(req.url)
-  const store = configureStore(memoryHistory)
-  const history = syncHistoryWithStore(memoryHistory, store)
-
-  match({ history, routes, location: req.url }, (error, redirectLocation, renderProps) => {
+  const store = configureStore(memoryHistory,{count:{number:3}})
+  store.subscribe(()=>{console.log(store.getState())});
+  console.log("con",memoryHistory)
+  //const history = syncHistoryWithStore(memoryHistory, store)
+  const content = renderToString(
+    <Provider store={store}>
+       <Match name="root">
+          <App history={memoryHistory}>
+            <Match name="root" isExactly={true}>
+              <Home/>
+            </Match>
+            <Match name="foo" isExactly={true}>
+              <div>
+                <Home/>
+                <Foo/>
+              </div>
+            </Match>
+            <Match name="bar" isExactly={true}>
+              <Bar/>
+            </Match>
+          </App>  
+        </Match>
+    </Provider>
+  )
+res.send('<!doctype html>\n' + renderToString(<HTML content={content} store={store}/>))
+  /*match({ history, routes, location: req.url }, (error, redirectLocation, renderProps) => {
     if (error) {
       res.status(500).send(error.message)
     } else if (redirectLocation) {
@@ -54,7 +80,7 @@ app.use(function (req, res) {
 
       res.send('<!doctype html>\n' + renderToString(<HTML content={content} store={store}/>))
     }
-  })
+  })*/
 })
 
 app.listen(8080, function () {

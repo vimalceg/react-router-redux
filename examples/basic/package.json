@@ -4,12 +4,13 @@
   "repository": "reactjs/react-router-redux",
   "license": "MIT",
   "dependencies": {
+    "history": "^3.2.1",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "react-redux": "^4.3.0",
-    "react-router": "^2.0.0",
+    "react-router-redux": "^4.0.0",
     "redux": "^3.2.1",
-    "react-router-redux": "^4.0.0"
+    "simple-normalizr": "^1.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.4.5",

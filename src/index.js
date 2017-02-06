@@ -1,9 +1,5 @@
-export syncHistoryWithStore from './sync'
-export { LOCATION_CHANGE, routerReducer } from './reducer'
-
-export {
-  CALL_HISTORY_METHOD,
-  push, replace, go, goBack, goForward,
-  routerActions
-} from './actions'
-export routerMiddleware from './middleware'
+export { routing } from './reducer'
+export { push, replace /*, go, goBack, goForward*/ } from './actions';//have to add all history action
+export { historyMiddleware } from './middleware'
+export { Link } from './components/Link';
+export { Match } from './components/Match';
