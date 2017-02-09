@@ -1,0 +1,34 @@
+<html>
+	<head>
+		<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		iframe{
+			border: 1px solid #000;
+			height: 100vh;
+			width: calc(100vw - 200px);
+		}
+		.container:after{
+			clear: both;
+		}
+		.left{
+			width: 200px;
+			float: left;
+		}
+		</style>
+	</head>
+	<body>
+	<div class="container">
+		<div class="left">
+			<a href="basic" target="example">basic</a><br/>
+			<a href="auth" target="example">Authenticate</a><br/>
+			<a href="form" target="example">Preventing Transitions</a>
+		</div>
+		<div class="left">
+			<iframe src="form" name="example"></iframe>
+		</div>
+	</div>
+	</body>
+</html>

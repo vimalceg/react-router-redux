@@ -29,7 +29,8 @@
     "test:cov:node": "babel-node $(npm bin)/isparta cover $(npm bin)/_mocha report --dir ./coverage/node-coverage -- --recursive ./test/node",
     "test:cov:browser": "COVERAGE=true karma start",
     "test:cov:report": "$(npm bin)/istanbul report --dir ./coverage --include **/*coverage.json html text",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "start": "webpack public/js/ReactRouterRedux.js && node server.js"
   },
   "tags": [
     "react",
@@ -56,7 +57,8 @@
     "eslint-config-rackt": "^1.1.1",
     "eslint-plugin-react": "^3.15.0",
     "expect": "^1.13.0",
-    "history": "^3.0.0",
+    "express": "^4.14.1",
+    "history": "^4.0.0",
     "isparta": "^4.0.0",
     "isparta-loader": "^2.0.0",
     "karma": "^0.13.3",

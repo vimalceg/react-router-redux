@@ -22,7 +22,7 @@
 	}
 */
 import { normalize } from 'simple-normalizr';
-import { MATCH, EXACT_MATCH, NOT_MATCH, URL_CHANGE } from './constants';
+import { MATCH, EXACT_MATCH, NOT_MATCH, URL_CHANGE, URL_CHANGE_BLOCK, URL_CHANGE_UNBLOCK } from './constants';
 import { urlsSchema, initialStateWithTokens, matchPattern } from './utils'
 
 
@@ -36,6 +36,7 @@ export const routing=(urls)=>{
     location
   };
   return (state = initialState, action)=>{
+    console.log(action)
     var currentParams;
     switch(action.type){
       case URL_CHANGE:
@@ -59,6 +60,10 @@ export const routing=(urls)=>{
             paramMap:currentParams && currentParams.paramMap || {},
             location:location(state.location,action),//old location and new location are diff deep compare
         }
+        case URL_CHANGE_BLOCK:
+        return Object.assign({},state,{block:true})
+        case URL_CHANGE_UNBLOCK:
+        return Object.assign({},state,{block:false})
     }
     return state;
   }

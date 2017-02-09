@@ -1,0 +1,149 @@
+<html>
+	<head>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.2.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.2.0/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/4.4.5/react-redux.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/history/3.0.0/history.js"></script>
+    <script src="/js/ReactRouterRedux.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+    <style type="text/css">
+    *{
+    	margin: 0;
+    	padding: 0;
+    }
+    </style>
+	</head>
+	<body>
+		<div id="url"></div>
+		<div id="app"></div>
+		<script type="text/babel">
+			var history=History.createHistory();
+			document.getElementById("url").innerHTML=history.getCurrentLocation().pathname;
+			history.listen(()=>{
+				document.getElementById("url").innerHTML=history.getCurrentLocation().pathname;	
+			})
+			
+			var { combineReducers, applyMiddleware, compose, createStore } = Redux;
+			var { connect, Provider } = ReactRedux;
+			var { routing, Match, Link, historyMiddleware, push } = ReactRouterRedux;
+			var currentUser = (state=null,action) =>{
+				console.log("currentUser",state)
+				switch(action.type){
+					case "CURRENT_USER":
+					return action.data
+				}
+				return state;
+			}
+			const reducer = combineReducers({
+				currentUser,
+			  routing:routing([
+			    {name:"home",pattern:"/auth"},
+			    {name:"about",pattern:"/auth/about"},
+			    {name:"topics",pattern:"/auth/topics"},
+			    {name:"topic",pattern:"/auth/topics/:topic"},
+			    {name:"login",pattern:"/auth/login"}
+
+			  ])
+			})
+
+			const middleware = applyMiddleware(historyMiddleware(history))
+			const enhancer = compose(middleware)
+			const store = createStore(
+			  reducer,
+			  enhancer
+			)
+
+			const Home = () => (
+			  <div>
+			    <h2>Home</h2>
+			  </div>
+			)
+
+			const About = () => (
+			  <div>
+			    <h2>About</h2>
+			  </div>
+			)
+			const Topic = ({ topic }) => (
+			  <div>
+			    <h3>{topic}</h3>
+			  </div>
+			)
+				const Login = ({onLogin}) => (
+			  <div>
+			    <a onClick={onLogin}>Login</a>
+			  </div>
+			)
+				const Logout = ({onLogout}) => (
+			  <div>
+			    <a onClick={onLogout}>Logout</a>
+			  </div>
+			)
+
+
+			const TopicContainer=connect((state)=>{
+				return {
+					topic:state.routing.paramMap.topic
+				}
+			})(Topic)
+
+			const Topics = () => (
+			  <div>
+			    <h2>Topics</h2>
+			    <ul>
+			      <li><Link name='topic' params={{topic:"Rendering with React"}}>Rendering with React</Link></li>
+			      <li><Link name='topic' params={{topic:"Components"}}>Components</Link></li>
+			      <li><Link name='topic' params={{topic:"props-v-state"}}>Props v. State</Link></li>
+			    </ul>
+
+			    <Match name="topic">
+			    	<TopicContainer/>
+			    </Match>
+			    <Match isExactly={true} name="topics"  redirect={{pathname:"/home"}}>
+			      	<h3>Please select a topic.</h3>
+			    </Match>
+			  </div>
+			)
+
+			var App=()=>{
+				return <Provider store={store}>
+				      <Match name="home">
+				      <div>
+				      	<ul>
+					        <li><Link name="home">Home</Link></li>
+					        <li><Link name="about">About</Link></li>
+					        <li><Link name="topics">Topics</Link></li>
+					        <li><Link name="login">Login</Link></li>
+					        <Logout onLogout={()=>{
+					        	store.dispatch({type:"CURRENT_USER",data:null})
+					        }}/>
+					      </ul>
+
+					      <hr/>
+					      <Match isExactly={true} name="home">
+				          	<Home />
+				          </Match>
+				          <Match isExactly={true} name="about">
+				          	<About />
+				          </Match>
+				          <Match isExactly={true} name="login">
+				          	<Login onLogin={()=>{
+				          		//console.log("test....",store.getState().routing.location.state)
+				          		store.dispatch({type:"CURRENT_USER",data:{id:1,name:"vimal"}})
+				          		store.dispatch(push({pathname:store.getState().routing.location.state || '/auth'}))
+				          	}}/>
+				          </Match>
+				          <Match name="topics" checkAuthenticate={(state)=>{ return state.currentUser!=null}} redirect={{pathname:"/auth/login",state:"/auth/topics"}}>
+				          	<Topics />
+				          </Match>
+				          </div>
+				      </Match>
+
+				  </Provider>
+			}
+
+			ReactDOM.render(<App/>,app)
+		</script>
+	</body>
+</html>
