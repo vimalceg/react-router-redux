@@ -11902,7 +11902,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 
-	      if (!this.props.isAuthenticate) {
+	      if (!this.props.isAuthenticate && this.props.isMatch) {
 	        this.props.replace(this.props.redirect);
 	      }
 	    }
@@ -11910,7 +11910,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'componentDidUpdate',
 	    value: function componentDidUpdate(prevProps, prevState) {
 
-	      if (!this.props.isAuthenticate) {
+	      if (!this.props.isAuthenticate && this.props.isMatch) {
 	        this.props.replace(this.props.redirect);
 	      }
 	    }

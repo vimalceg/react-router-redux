@@ -8,14 +8,14 @@ export class Match extends React.Component{
   }
   componentDidMount() {
     
-    if(!this.props.isAuthenticate){
+    if(!this.props.isAuthenticate && this.props.isMatch){
        this.props.replace(this.props.redirect)
        
     }
   }
   componentDidUpdate(prevProps, prevState) {
     
-    if(!this.props.isAuthenticate){
+    if(!this.props.isAuthenticate && this.props.isMatch){
       this.props.replace(this.props.redirect)
     }
   }
